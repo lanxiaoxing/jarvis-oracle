@@ -131,7 +131,7 @@ async function fetchOracleData(userQuery = '') {
             ai_focus: aiFocus,
             critical_alerts: criticalAlerts,
             top_movers: topMovers,
-            last_update: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+            last_update: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Shanghai' }),
             is_search: Boolean(userQuery)
         };
     } catch (e) {
