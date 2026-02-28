@@ -2,8 +2,17 @@ const GAMMA_API_URL = "https://gamma-api.polymarket.com";
 const CLOB_API_URL = "https://clob.polymarket.com";
 
 const THUNDER_KEYWORDS = [
+    // Tech & AI
     'deepseek', 'ai', 'nvidia', 'gpu', 'openai', 'gpt', 'anthropic', 'claude',
-    'apple intelligence', 'siri', 'bitcoin', 'btc', 'eth'
+    'apple intelligence', 'siri',
+    // Crypto
+    'bitcoin', 'btc', 'eth', 'solana', 'crypto',
+    // Politics & Geopolitics
+    'trump', 'biden', 'election', 'president', 'congress', 'senate',
+    'china', 'taiwan', 'russia', 'ukraine', 'war', 'nato',
+    'fed', 'tariff', 'sanctions', 'iran', 'israel',
+    // Economy
+    'recession', 'inflation', 'interest rate', 'gdp', 's&p'
 ];
 
 function getPrice(market) {
@@ -109,8 +118,14 @@ async function fetchOracleData(userQuery = '') {
         }
 
         // Split categories
+        const FOCUS_KEYWORDS = [
+            'ai', 'seek', 'gpt', 'model', 'apple', 'nvidia', 'openai', 'anthropic', 'claude',
+            'trump', 'biden', 'election', 'president', 'china', 'taiwan', 'russia', 'ukraine', 'war',
+            'bitcoin', 'btc', 'eth', 'crypto',
+            'fed', 'tariff', 'recession', 'inflation'
+        ];
         let aiFocus = relevantData.filter(m =>
-            ['ai', 'seek', 'gpt', 'model', 'apple', 'nvidia'].some(k => (m.question || '').toLowerCase().includes(k))
+            FOCUS_KEYWORDS.some(k => (m.question || '').toLowerCase().includes(k))
         );
         if (userQuery && aiFocus.length === 0) {
             aiFocus = relevantData.slice(0, 10);
