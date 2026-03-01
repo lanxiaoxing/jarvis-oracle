@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JARVIS ORACLE - Prediction Market Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
         rel="stylesheet">
@@ -303,7 +304,19 @@
         <!-- Header -->
         <header class="mb-8 flex flex-col md:flex-row justify-between items-center gap-5">
             <div class="flex items-center gap-3">
-                <div class="text-3xl">🦾</div>
+                <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="36" stroke="#38bdf8" stroke-width="1.5" fill="none" />
+                    <circle cx="50" cy="50" r="35" fill="url(#glow)" opacity="0.35" />
+                    <circle cx="38" cy="38" r="6" fill="white" opacity="0.1" />
+                    <circle cx="36" cy="35" r="2.5" fill="white" opacity="0.2" />
+                    <defs>
+                        <radialGradient id="glow" cx="50%" cy="50%">
+                            <stop offset="0%" stop-color="#38bdf8" stop-opacity="1" />
+                            <stop offset="70%" stop-color="#38bdf8" stop-opacity="0.2" />
+                            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0" />
+                        </radialGradient>
+                    </defs>
+                </svg>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white">JARVIS ORACLE</h1>
                     <p class="text-[11px] text-slate-500 mt-0.5 mono">POLYMARKET INTELLIGENCE FEED</p>
