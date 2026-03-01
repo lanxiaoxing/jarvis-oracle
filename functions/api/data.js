@@ -65,6 +65,30 @@ async function getHistoricalPriceDelta(market) {
     return 0;
 }
 
+// Auto-tag markets based on question content
+const TAG_RULES = [
+    { tag: 'AI', keys: ['ai ', ' ai', 'gpt', 'openai', 'anthropic', 'claude', 'deepseek', 'model', 'llm'] },
+    { tag: 'Crypto', keys: ['bitcoin', 'btc', 'ethereum', 'eth ', 'solana', 'crypto', 'defi'] },
+    { tag: 'Politics', keys: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'democrat', 'republican'] },
+    { tag: 'Geopolitics', keys: ['china', 'taiwan', 'russia', 'ukraine', 'nato', 'war', 'invasion', 'iran', 'israel', 'north korea'] },
+    { tag: 'Economy', keys: ['fed ', 'fed?', 'rate cut', 'interest rate', 'inflation', 'recession', 'gdp', 'tariff', 's&p'] },
+    { tag: 'Tech', keys: ['nvidia', 'apple', 'google', 'meta', 'microsoft', 'tesla', 'spacex'] },
+    { tag: 'Sports', keys: ['premier league', 'nba', 'nfl', 'champions league', 'world cup', 'super bowl'] },
+];
+
+function getAutoTags(market) {
+    // Only match on question to avoid false positives from description boilerplate
+    const text = (market.question || '').toLowerCase();
+    const tags = [];
+    for (const rule of TAG_RULES) {
+        if (rule.keys.some(k => text.includes(k))) {
+            tags.push(rule.tag);
+        }
+    }
+    if (tags.length === 0) return ['Other'];
+    return tags.slice(0, 2); // Max 2 tags
+}
+
 async function fetchOracleData(userQuery = '') {
     try {
         const headers = { 'User-Agent': 'Mozilla/5.0' };
@@ -125,6 +149,7 @@ async function fetchOracleData(userQuery = '') {
             if (currentP === null) continue;
             m.current_prob = currentP * 100;
             m.delta_24h = 0; // placeholder
+            m.auto_tags = getAutoTags(m);
             relevantData.push(m);
         }
 

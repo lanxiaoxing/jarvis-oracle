@@ -47,31 +47,8 @@
             border: 1px solid rgba(51, 65, 85, 0.5);
             border-radius: 12px;
             backdrop-filter: blur(10px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .card:hover {
-            border-color: rgba(56, 189, 248, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(56, 189, 248, 0.05);
-        }
-
-        .card:hover::before {
-            opacity: 1;
         }
 
         /* Probability bar */
@@ -253,6 +230,57 @@
             background: rgba(30, 41, 59, 0.5);
         }
 
+        /* Tag pills */
+        .tag-pill {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 500;
+            padding: 1px 6px;
+            border-radius: 3px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .tag-AI {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6b7ab8;
+        }
+
+        .tag-Crypto {
+            background: rgba(245, 158, 11, 0.08);
+            color: #a08a4c;
+        }
+
+        .tag-Politics {
+            background: rgba(239, 68, 68, 0.08);
+            color: #a07070;
+        }
+
+        .tag-Geopolitics {
+            background: rgba(244, 63, 94, 0.08);
+            color: #a07080;
+        }
+
+        .tag-Economy {
+            background: rgba(34, 197, 94, 0.08);
+            color: #6a9a7a;
+        }
+
+        .tag-Tech {
+            background: rgba(56, 189, 248, 0.08);
+            color: #6a8fa0;
+        }
+
+        .tag-Sports {
+            background: rgba(168, 85, 247, 0.08);
+            color: #8a7aa0;
+        }
+
+        .tag-Other {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+        }
+
         /* Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
@@ -381,10 +409,11 @@
                             const vol = m.volume >= 1000000
                                 ? `$${(m.volume / 1000000).toFixed(1)}M`
                                 : `$${(m.volume / 1000).toFixed(0)}K`;
+                            const tags = (m.auto_tags || []).map(t => `<span class="tag-pill tag-${t}">${t}</span>`).join(' ');
                             return `
                             <div class="card p-4 relative">
-                                <p class="text-[13px] font-medium mb-4 leading-relaxed text-slate-200 pr-2">${m.question}</p>
-                                <div class="flex justify-between items-end">
+                                <p class="text-[14px] font-semibold mb-4 leading-relaxed text-slate-100">${m.question}</p>
+                                <div class="flex justify-between items-end mb-3">
                                     <div class="flex items-baseline gap-2">
                                         <span class="text-2xl font-bold text-sky-400 mono">${prob}%</span>
                                         <span class="delta-badge ${isUp ? 'up delta-up' : 'down delta-down'} mono">
@@ -393,6 +422,7 @@
                                     </div>
                                     <span class="vol-tag mono">${vol}</span>
                                 </div>
+                                <div class="flex gap-1 flex-wrap">${tags}</div>
                                 <div class="prob-bar" style="width: ${prob}%"></div>
                             </div>`;
                         }).join('');
