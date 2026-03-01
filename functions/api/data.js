@@ -27,9 +27,20 @@ function getPrice(market) {
 }
 
 async function getHistoricalPriceDelta(market) {
+    // Try to get token_id from multiple sources
+    let tokenId = null;
     const tokens = market.tokens || [];
-    if (!tokens.length) return 0;
-    const tokenId = tokens[0].token_id;
+    if (tokens.length > 0) {
+        tokenId = tokens[0].token_id;
+    } else {
+        // Fallback: parse clobTokenIds (JSON string like '["tokenId1","tokenId2"]')
+        try {
+            const clobIds = JSON.parse(market.clobTokenIds || '[]');
+            if (clobIds.length > 0) tokenId = clobIds[0];
+        } catch { }
+    }
+    if (!tokenId) return 0;
+
     const currentPrice = getPrice(market);
     if (currentPrice === null) return 0;
     try {
@@ -40,7 +51,7 @@ async function getHistoricalPriceDelta(market) {
         });
         const res = await fetch(`${CLOB_API_URL}/prices-history?${params}`, {
             headers: { 'User-Agent': 'Mozilla/5.0' },
-            signal: AbortSignal.timeout(2000)
+            signal: AbortSignal.timeout(3000)
         });
         if (res.ok) {
             const data = await res.json();
@@ -103,7 +114,7 @@ async function fetchOracleData(userQuery = '') {
             marketsList = await res.json();
         }
 
-        // Process markets
+        // Process markets - first pass: filter and get prices (no delta yet)
         const relevantData = [];
         for (const m of marketsList) {
             if (!userQuery) {
@@ -113,11 +124,11 @@ async function fetchOracleData(userQuery = '') {
             const currentP = getPrice(m);
             if (currentP === null) continue;
             m.current_prob = currentP * 100;
-            m.delta_24h = (await getHistoricalPriceDelta(m)) * 100;
+            m.delta_24h = 0; // placeholder
             relevantData.push(m);
         }
 
-        // Split categories
+        // Split categories (without delta data first)
         const FOCUS_KEYWORDS = [
             'ai', 'seek', 'gpt', 'model', 'apple', 'nvidia', 'openai', 'anthropic', 'claude',
             'trump', 'biden', 'election', 'president', 'china', 'taiwan', 'russia', 'ukraine', 'war',
@@ -138,7 +149,26 @@ async function fetchOracleData(userQuery = '') {
             .sort((a, b) => parseFloat(b.volume || 0) - parseFloat(a.volume || 0))
             .slice(0, 10);
 
-        let topMovers = [...relevantData]
+        // For movers, sort by volume first as initial ranking (delta unknown yet)
+        let topMoverCandidates = [...relevantData]
+            .sort((a, b) => parseFloat(b.volume || 0) - parseFloat(a.volume || 0))
+            .slice(0, 30);
+
+        // Collect unique markets that need delta (deduplicate)
+        const deltaMarkets = new Map();
+        [...aiFocus, ...criticalAlerts, ...topMoverCandidates].forEach(m => {
+            if (!deltaMarkets.has(m.id)) deltaMarkets.set(m.id, m);
+        });
+
+        // Fetch deltas in PARALLEL with short timeout
+        await Promise.all(
+            [...deltaMarkets.values()].map(async (m) => {
+                m.delta_24h = (await getHistoricalPriceDelta(m)) * 100;
+            })
+        );
+
+        // Re-sort movers by actual delta
+        let topMovers = [...deltaMarkets.values()]
             .sort((a, b) => Math.abs(b.delta_24h) - Math.abs(a.delta_24h))
             .slice(0, 10);
 
