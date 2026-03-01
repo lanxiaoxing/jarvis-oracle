@@ -70,7 +70,7 @@ const TAG_RULES = [
     { tag: 'AI', keys: ['ai ', ' ai', 'gpt', 'openai', 'anthropic', 'claude', 'deepseek', 'model', 'llm'] },
     { tag: 'Crypto', keys: ['bitcoin', 'btc', 'ethereum', 'eth ', 'solana', 'crypto', 'defi'] },
     { tag: 'Politics', keys: ['trump', 'biden', 'election', 'president', 'congress', 'senate', 'democrat', 'republican'] },
-    { tag: 'Geopolitics', keys: ['china', 'taiwan', 'russia', 'ukraine', 'nato', 'war', 'invasion', 'iran', 'israel', 'north korea'] },
+    { tag: 'Geopolitics', keys: ['china', 'taiwan', 'russia', 'ukraine', 'nato', 'war', 'invasion', 'iran', 'iraq', 'israel', 'north korea', 'strike'] },
     { tag: 'Economy', keys: ['fed ', 'fed?', 'rate cut', 'interest rate', 'inflation', 'recession', 'gdp', 'tariff', 's&p'] },
     { tag: 'Tech', keys: ['nvidia', 'apple', 'google', 'meta', 'microsoft', 'tesla', 'spacex'] },
     { tag: 'Sports', keys: ['premier league', 'nba', 'nfl', 'champions league', 'world cup', 'super bowl'] },
